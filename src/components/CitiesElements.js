@@ -75,12 +75,37 @@ export const  NbCitiesFound = styled.div`
     
 `
 
+export const NbCitiesNotFound = styled.div`
+    background: rgba(187, 55, 55, 0.63);
+    height:60px;
+    color:#FFFFFF;
+    width:90%;
+    margin: 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`
+
 export const ContainerCities = styled.div`
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     width: 100%;
     justify-content: space-around;
+`
+
+export const ShowMore = styled.span`
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+    transition: ease-in 0.1s;
+
+    &:hover{
+        font-weight: bold;
+        font-size: 15px;
+        transition: ease-in 0.1s;
+    }
 `
 
 export const CardCity = styled.div`
@@ -99,10 +124,10 @@ export const CityName = styled.span`
 `
 
 export const PostalCode = styled.span`
-    color:#8C8F9A;
+    color:#aeb2bf;
 `
 
-export const OverseasCities = styled.div`
+export const CitiesOverseas = styled.div`
     width: 47%;
     min-height: 80%;
     height: auto;
@@ -114,7 +139,7 @@ export const OverseasCities = styled.div`
     }
 `;
 
-export const OvereasTitle = styled.span`
+export const OverseasTitle = styled.span`
     font-family: Montserrat;
     font-weight: bold;
     font-size: 30px;

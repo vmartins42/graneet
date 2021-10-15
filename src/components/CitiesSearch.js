@@ -1,23 +1,36 @@
 import React, {useState} from 'react'
-import {Container, SearchBar, CitiesMetropolis, OverseasCities,SearchTitle,SearchInput,CitiesTitle,OvereasTitle,ContainerCities,CardCity,CityName,PostalCode,NbCitiesFound} from './CitiesElements'
+import {Container, SearchBar, CitiesMetropolis, CitiesOverseas,SearchTitle,SearchInput,CitiesTitle,OverseasTitle,ContainerCities,CardCity,CityName,PostalCode,NbCitiesFound,NbCitiesNotFound,ShowMore} from './CitiesElements'
 import axios from 'axios'
 
 const CitiesSearch = () => {
-    const [datas, setDatas] = useState([])
+    const [metropoleCities, setMetropoleCities] = useState([])
+    const [overseasCities, setOverseasCities] = useState([])
     const [searchData,setSearchData] = useState('')
+    const [showCities, setShowCities] = useState(400)
 
     //recupere les donnees saisis et les envoies au back pour les traiter et faire la requete.
     const handleChange = (e) => {
         setSearchData(e.target.value)
-        if (e.target.value === '')
-            setDatas([])
+        setShowCities(100)
+        if (e.target.value === ''){
+            setMetropoleCities([])
+            setOverseasCities([])
+            setShowCities(100)
+        }
         else {
             axios({
                 method: "get",
                 url: "http://localhost:8080/cities/all",
                 params: {data: e.target.value},
-            }).then((response) => setDatas(response.data));
+            }).then((response) => {
+                setMetropoleCities(response.data.metropoleCities)
+                setOverseasCities(response.data.overseasCities)
+            });
         }
+    }
+
+    const showMoreCities = () => {
+        setShowCities(showCities >= metropoleCities.length ? metropoleCities.length : showCities + 100)
     }
 
     return (
@@ -35,18 +48,28 @@ const CitiesSearch = () => {
             <CitiesMetropolis>
                 <CitiesTitle> villes de metropole</CitiesTitle>
                 <ContainerCities>
-                {datas.length !== 0 ? <NbCitiesFound>{datas.length} villes correspondant au texte saisi</NbCitiesFound>: ''}
-               {datas.length !== 0? datas.map((city,index) => {
-                   return <CardCity>
-                            <CityName key={index}>{city.nomCommune}</CityName>
-                            <PostalCode key={index}>{city.codePostal}</PostalCode>
+                {metropoleCities.length !== 0 ? <NbCitiesFound>{metropoleCities.length} villes correspondant au texte saisi</NbCitiesFound>: <NbCitiesNotFound>{metropoleCities.length} villes correspondant au texte saisi</NbCitiesNotFound>}
+                {metropoleCities.length !== 0 ? metropoleCities.slice(0,showCities).map((city,index) => {
+                   return <CardCity key={index}>
+                            <CityName>{city.nomCommune}</CityName>
+                            <PostalCode >{city.codePostal}</PostalCode>
                        </CardCity>;
                }): ''}
                 </ContainerCities>
+                {showCities <= metropoleCities.length ? <ShowMore onClick={showMoreCities}>Show more...</ShowMore> : ''}
             </CitiesMetropolis>
-            <OverseasCities>
-                <OvereasTitle>ville d&apos;outre-mer</OvereasTitle>
-            </OverseasCities>
+            <CitiesOverseas>
+                <OverseasTitle>ville d&apos;outre-mer</OverseasTitle>
+                <ContainerCities>
+                {overseasCities.length !== 0 ? <NbCitiesFound>{overseasCities.length} villes correspondant au texte saisi</NbCitiesFound>:  <NbCitiesNotFound>{overseasCities.length} villes correspondant au texte saisi</NbCitiesNotFound>}
+                {overseasCities.length !== 0 ? overseasCities.map((city,index) => {
+                   return <CardCity key={index}>
+                            <CityName>{city.nomCommune}</CityName>
+                            <PostalCode >{city.codePostal}</PostalCode>
+                       </CardCity>;
+               }): ''}
+                </ContainerCities>
+            </CitiesOverseas>
         </Container>
     )
 }
